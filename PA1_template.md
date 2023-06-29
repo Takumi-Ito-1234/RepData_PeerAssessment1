@@ -76,7 +76,7 @@ This is the first question to answer.  Short answer and some observation as belo
 - 13% data is missing
 - Segment of observation with 0 steps as daily total
 - Maximum is more than 20,000 steps
-
+- Daily median is 10,395 and mean is 9,354
 
 
 ```r
@@ -100,38 +100,14 @@ ggplot(a0, aes(x = sum)) + geom_histogram() + labs( x ="Steps per day", y = "Cou
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
-## What is mean and median of steps taken per day?
-
-- Mean varies but median is basically 0 for each date
-
-
 ```r
-# What is mean of steps taken per day, plotting into line curve
-a0 <- with( df, tapply(steps, date, mean, na.rm = T))
-a0 <- data.frame( date = names(a0), mean = a0)
-ggplot(a0, aes(x = date, y = mean, group = 1)) + geom_line() + labs( x ="Date", y = "Mean of steps per day") + theme( axis.text.x=element_blank())
+summary(a0$sum) %>% print()
 ```
 
 ```
-## Warning: Removed 2 rows containing missing values (`geom_line()`).
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       0    6778   10395    9354   12811   21194
 ```
-
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
-
-```r
-# What is median of steps taken per day, plotting into line
-a0 <- with( df, tapply(steps, date, median, na.rm = T))
-a0 <- data.frame( date = names(a0), median = a0)
-ggplot(a0, aes(x = date, y = median, group = 1)) + geom_line() + labs( x ="Date", y = "Median of steps per day") + theme( axis.text.x=element_blank())
-```
-
-```
-## Warning: Removed 2 rows containing missing values (`geom_line()`).
-```
-
-![](PA1_template_files/figure-html/unnamed-chunk-3-2.png)<!-- -->
-
-
 
 ## What is the average daily activity pattern?
 
@@ -144,7 +120,7 @@ a1 <- data.frame( interval = names(a1), ave = as.numeric(a1))
 ggplot(a1, aes(x = interval, y = ave, group = 1)) + geom_line() + theme( axis.text.x=element_blank()) + labs( x = "Interval Index", y = "Average steps")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 ```r
 filter(a1, ave == max( ave))
@@ -165,7 +141,7 @@ b0 <- filter(df, is.na(steps))
 ggplot(b0, aes(x = date, y = interval)) + geom_point()
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 Now, idea is to replace missing data by the average per interval per days (as people behavior could depend on day and time)
 
@@ -186,7 +162,7 @@ for(i in 1:nrow(df)){
 }
 ```
 
-Let's look at histogram with missing data imputed.
+Let's look at histogram with missing data imputed. Daily median and mean are now 11,015 and 10,821.
 
 
 ```r
@@ -200,7 +176,16 @@ ggplot(a2, aes(x = sum)) + geom_histogram() + labs( x ="Steps per day", y = "Cou
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
+```r
+summary(a2$sum) %>% print()
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      41    8918   11015   10821   12811   21194
+```
 
 # Are there differences in activity patterns between weekdays and weekends?
 
@@ -216,4 +201,4 @@ names(a3) <- c("days", "interval", "ave")
 ggplot(a3, aes(x = interval, y = ave, group = 1)) + facet_grid( rows = vars(days)) + geom_line(na.rm = T) + theme( axis.text.x=element_blank())
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->

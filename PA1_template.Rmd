@@ -31,7 +31,7 @@ This is the first question to answer.  Short answer and some observation as belo
 - 13% data is missing
 - Segment of observation with 0 steps as daily total
 - Maximum is more than 20,000 steps
-
+- Daily median is 10,395 and mean is 9,354
 
 ```{r echo = TRUE}
 print(mean(is.na(df$steps)))
@@ -39,25 +39,8 @@ a0 <- with( df, tapply(steps, date, sum, na.rm = T))
 a0 <- data.frame( date = names(a0), sum = a0)
 
 ggplot(a0, aes(x = sum)) + geom_histogram() + labs( x ="Steps per day", y = "Count during two months")
+summary(a0$sum) %>% print()
 ```
-
-## What is mean and median of steps taken per day?
-
-- Mean varies but median is basically 0 for each date
-
-```{r echo = TRUE}
-# What is mean of steps taken per day, plotting into line curve
-a0 <- with( df, tapply(steps, date, mean, na.rm = T))
-a0 <- data.frame( date = names(a0), mean = a0)
-ggplot(a0, aes(x = date, y = mean, group = 1)) + geom_line() + labs( x ="Date", y = "Mean of steps per day") + theme( axis.text.x=element_blank())
-
-# What is median of steps taken per day, plotting into line
-a0 <- with( df, tapply(steps, date, median, na.rm = T))
-a0 <- data.frame( date = names(a0), median = a0)
-ggplot(a0, aes(x = date, y = median, group = 1)) + geom_line() + labs( x ="Date", y = "Median of steps per day") + theme( axis.text.x=element_blank())
-```
-
-
 
 ## What is the average daily activity pattern?
 
@@ -98,13 +81,14 @@ for(i in 1:nrow(df)){
 }
 ```
 
-Let's look at histogram with missing data imputed.
+Let's look at histogram with missing data imputed. Daily median and mean are now 11,015 and 10,821.
 
 ```{r echo = TRUE}
 a2 <- with( df, tapply(steps_wo_NA, date, sum, na.rm = T))
 a2 <- data.frame( date = names(a2), sum = a2)
 
 ggplot(a2, aes(x = sum)) + geom_histogram() + labs( x ="Steps per day", y = "Count during two months")
+summary(a2$sum) %>% print()
 ```
 
 # Are there differences in activity patterns between weekdays and weekends?
